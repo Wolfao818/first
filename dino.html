@@ -111,6 +111,23 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
 <body>
 
 <h1>🦕 DINO RUNNER</h1>
+<div id="score-bar">
+    <div>SCORE: <span id="scoreDisplay">0</span></div>
+    <div>BEST: <span id="highDisplay">0</span></div>
+    <div>LEVEL: <span id="levelDisplay">1</span></div>
+</div>
 
+<div id="gameContainer">
+    <canvas id="c" width="820" height="260"></canvas>
+
+    <!-- CHARACTER SELECT -->
+     <div id="charSelect"></div>
+     <div class="cs-title">🦕 CHOOSE YOUR DINO</div>
+     <div id="dino-grid"></div>
+     <button id="start-btn">▶ PLAY</button>
+     <div class="cs-sub">← → arrow keys or click to pick</div>     
+</div>
+
+<!-- GAME OVERLAY (pause / game over) -->
 </body>
 
