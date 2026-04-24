@@ -29,10 +29,11 @@ h1 {
    width: 820px; max-width: 96vw;
    margin-bottom: 8px; font-size: 0.5rem; color: #888;
 }
-#score-bar span { color: #00ff88 }
+#score-bar span { color: #00ff88; }
+#score-bar .cv { color: #fbbf24; }
 
 #gameContainer {
-    position: relative; width: 820px; max-width: 96vw;
+    position: relative; width: 1820px; max-width: 96vw;
     background: #16213e;
     border: 2px solid #00ff88;
     box-shadow: 0 0 40px #00ff8822, inset 0 0 40px #00000055;
@@ -40,8 +41,9 @@ h1 {
 }
 
 canvas { display: block; width: 100%; image-rendering: pixelated; }
+#c { width: 100%; }
 
- /* ── OVERLAY ── */
+ /* */
  #overlay {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
@@ -52,11 +54,23 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
 #overlay .emoji { font-size: 3rem; animation: hop 0.7s infinite alternate; }
 @keyframes hop { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 #overlay .title { font-size: 1rem; color: #00ff88; text-shadow: 0 0 12px #00ff88; }
-#overlay .sub { font-size: 0.5rem; color: #aaa; text-align: center; line-height: 2.2; }
-#overlay .dead { font-size: 0.65rem; color: #ff6b6b; }
-#overlay .record { font-size: 0.5rem; color: #ffaa33; }
+#overlay .sub { font-size: 0.9rem; color: #aaa; text-align: center; line-height: 2.2; }
+#overlay .dead { font-size: 0.9rem; color: #ff6b6b; }
+#overlay .record { font-size: 0.9rem; color: #ffaa33; }
 
-/* ── CHARACTER SELECT ── */
+/*  */
+.ov-btn {
+   font-family: 'Press Start 2P', monospace;
+   font-size: 0.85rem; padding: 8px 18px;
+   border-radius: 4px; border: none; cursor: pointer;
+   letter-spacing: 1px; margin: 3px;
+   transition: transform 0.1s, box-shadow 0.1s;
+}
+.ov-btn:hover { transform: scale(1.06); }
+.ov-btn.primary { background: #00ff88; color:#0f0f1a; box-shadow: 0 0 14px #00ff8855; }
+.ov-btn.secondary { background: #1a1a3a; color: #888; border: 1px solid #333; }
+
+/* ──  ── */ 
 #charSelect {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
@@ -65,13 +79,11 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
 }
  #charSelect.hidden { display: none; }
  #charSelect .cs-title {
-    font-size: 0.75rem; color: #00ff88;
+    font-size: 1.75rem; color: #00ff88;
     text-shadow: 0 0 10px #00ff88;
     letter-spacing: 2px;
  }
- #charSelect .cs-sub {
-    font-size: 0.38rem; color: #666;
- }
+ #charSelect .cs-sub { font-size: 0.68rem; color: #666; }
  #dino-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -79,33 +91,83 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
  }
  .dino-card {
     display: flex; flex-direction: column; align-items: center; gap: 6px;
-    cursor: pointer;
-    padding: 10px 14px;
-    border: 2px solid #ffffff11;
-    border-radius: 6px;
-    background: #0f0f2a;
+    cursor: pointer; padding: 10px 14px;
+    border: 2px solid #ffffff11; border-radius: 6px; background: #0f0f2a;
     transition: border-color 0.15s, transform 0.15s, background 0.15s;    
  }
- .dino-card.hover { transform: translateY(-3px); background: #1a1a3a; }
- .dino-card.selected { border-color: #00ff88; background: #0a2a1a; box-shadow: 0 0 14px #00ff8844; }
- .dino-card canvas { display: block; image-rendering: pixelated; }
- .dino-name { font-size: 0.32rem; color: #aaa; letter-spacing: 1px; }
- .dino-card.selected .dino-name { color: #00ff88; }
+ .dino-card:hover { transform: translateY(-3px); background: #1a1a3a; }
+  .dino-card.selected { border-color: #00ff88; background: #0a2a1a; box-shadow: 0 0 14px #00ff8844; }
+  .dino-card.locked { cursor: not-allowed; opacity: 0.45; }
+  .dino-card.locked:hover { transform: none; background: #0f0f2a; }
+  .dino-card canvas { display: block; image-rendering: pixelated; }
+  .dino-name { font-size: 0.62rem; color: #aaa; letter-spacing: 1px; }
+  .dino-card.selected .dino-name { color: #00ff88; }
+  .dino-lock { font-size: 0.68rem; color: #fbbf24; }
 
  #start-btn {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.55rem;
+    font-family: 'Press Start 2P', monospace; font-size: 0.65rem;
     background: #00ff88; color: #0f0f1a;
-    border: none; padding: 10px 24px;
-    border-radius: 4px; cursor: pointer;
-    letter-spacing: 2px;
-    box-shadow: 0 0 20px #00ff8855;
+    border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer;
+    letter-spacing: 2px; box-shadow: 0 0 20px #00ff8855;
     transition: transform 0.1s; box-shadow: 0.1s;
  }
  #start-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px #00ff8888; }
  #start-btn:active { transform: scale(0.97); }
 
- #hint { font-size: 0.4rem; color: #444; margin-top: 8px; letter-spacing: 1px; }
+ #mainMenu {
+   position: absolute; inset: 0;
+   display: flex; flex-direction: column;
+   align-items: center; justify-content: center;
+   background: #16213eee; gap: 12px;
+ }
+#mainMenu.hidden { display: none; }
+.mm-title { font-size: 3rem; color: #00ff88; text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff8866; letter-spacing: 4px; }
+.mm-coins { font-size: 0.6rem; color: #fbbf24; text-shadow: 0 0 8px #fbbf2466; margin: 2px 0; }
+.mm-btn {
+   font-family: 'Press Start 2P', monospace; font-size: 0.78rem;
+   background: transparent; border: 2px solid #00ff88;
+   padding: 10px 0; border-radius: 4px; cursor: pointer;
+   letter-spacing: 2px; width: 220px; text-align: center;
+   transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+}
+.mm-btn:hover { background: #00ff8822; transform: scale(1.04); box-shadow: 0 0 16px #00ff8844; }
+.mm-btn.play { background: #00ff88; color: #0f0f1a; box-shadow: 0 0 18px #00ff8855; }
+.mm-btn.play:hover { background: #00ff88; color: #0f0f1a; box-shadow: 0 0 18px #00ff8855; }
+
+#shopMenu {
+   position: absolute; inset: 0;
+   display: flex; flex-direction: column;
+   align-items: center; justify-content: center;
+   background: #16213eee; gap: 12px;
+   padding: 16px 0;
+}
+#shopMenu.hidden { display: none; }
+.shop-title { font-size: 1.7rem; color: #fbbf24; text-shadow: 0 0 10px #fbbf24; letter-spacing: 2px; }
+.shop-coins { font-size: 1.2rem; color: #fbbf24; }
+#shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.shop-card {
+   display: flex; flex-direction: column; align-items: center; gap: 5px;
+   padding: 10px 12px; border: 2px solid #ffffff11; border-radius: 6px;
+   background: #0f0f2a; min-width: 90px;
+   transition: border-color 0.15s; transform: 0.15s;
+}
+.shop-card.owned { border-color: #00ff8855; }
+.shop-card.can-buy { border-color: #fbbd2466; cursor: pointer; }
+.shop-card.can-buy:hover { transform: translateY(-3px); border-color: #fbbf24; background: #1a1a3a; }
+.shop-card.cant-afford { opacity: 0.5; }
+.shop-card canvas { display: block; image-rendering: pixelated; }
+.shop-dino-name { font-size: 0.68rem; color: #aaa; }
+.shop-price { font-size: 0.6rem; color: #fbbf24; }
+.shop-owned-tag { font-size: 0.68rem; color: #00ff88; }
+.shop-back-btn {
+   font-family: 'Press Start 2P', monospace; font-size: 0.82rem;
+   background: transparent; border: 1px solid #333; color: #555;
+   padding: 8px 20px; border-radius: 4px; cursor: pointer;
+   transition: color 0.15s, border-color 0.15s;
+} 
+.shop-back-btn:hover { color: #aaa; border-color: #aaa; }
+
+ #hint { font-size: 0.8rem; color: #444; margin-top: 8px; letter-spacing: 1px; }
 </style>
 </head>
 <body>
@@ -115,12 +177,14 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
     <div>SCORE: <span id="scoreDisplay">0</span></div>
     <div>BEST: <span id="highDisplay">0</span></div>
     <div>LEVEL: <span id="levelDisplay">1</span></div>
+    <div>🪙 <span id="coinDisplay" class="cv">0</span></div>
 </div>
 
 <div id="gameContainer">
     <canvas id="c" width="820" height="260"></canvas>
 
-    <!-- CHARACTER SELECT -->
+    <!--  -->
+    <div id="mainMenu"
      <div id="charSelect"></div>
      <div class="cs-title">🦕 CHOOSE YOUR DINO</div>
      <div id="dino-grid"></div>
@@ -153,7 +217,15 @@ let selectedDinoIdx = 0;
 // ═══════════════════════════════════════════════════════
 //  HELPER: rounded rect path
 // ═══════════════════════════════════════════════════════
-function rr(ctx, x, y, w, h, r)
+function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h) ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+}
 
 
 
