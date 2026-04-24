@@ -184,40 +184,56 @@ canvas { display: block; width: 100%; image-rendering: pixelated; }
     <canvas id="c" width="820" height="260"></canvas>
 
     <!--  -->
-    <div id="mainMenu"
-     <div id="charSelect"></div>
+    <div id="mainMenu">
+      <div class="mm-title">🦕 DINO RUNNER</div>
+      <canvas id="mmDinoCanvas" width="110" height="85" style="image-rendering:pixelated"></canvas>
+      <div class="mm-coins">🪙 <span id="mm-coins">0</span> COINS</div>
+      <button class="mm-btn play" id="mm-play">▶ PLAY</button>
+      <button class="mm-btn" id="mm-dinos">🦕 DINO</button>
+      <button class="mm-btn" id="mm-shop">🛒 SHOP</button>
+    </div>
+
+     <div id="charSelect" class="hidden">
      <div class="cs-title">🦕 CHOOSE YOUR DINO</div>
      <div id="dino-grid"></div>
-     <button id="start-btn">▶ PLAY</button>
+     <div style="display:flex;gap:12px;align-items:center">
+      <button id="cs-back" style="font-family:'Press Start 2P',monospace;font-size:0.42rem;background:transparent;border:1px solid #333;color:#555;padding:15px 25px;border-radius:4px;cursor:pointer;transition:color .15s,border-color .15s" onmouseover="this.style.color='#aaa';this.style.borderColor='#aaa'" onmouseout="this.style.color='#555';this.style.borderColor='#333'">← MENU</button>
+      <button id="start-btn">▶ PLAY</button>
+      </div>
      <div class="cs-sub">← → arrow keys or click to pick</div>     
 </div>
 
-<!-- GAME OVERLAY (pause / game over) -->
+<div id="shopMenu" class="hidden">
+    <div class="shop-title">🛒 DINO SHOP</div>
+    <div class="shop-coins">🪙 <span id="shopCoins">0</span> COINS</div>
+    <div id="shop-grid"></div>
+    <button class="shop-back-btn" id="shop-back">← BACK TO MENU</button>
+  </div>
+
  <div id="overlay" class="hidden"></div>
 </div>
 <div id="hint">SPACE / ↑ = JUMP &nbsp;•&nbsp; ↓ = DUCK &nbsp;•&nbsp; P = PAUSE</div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  DINO PALETTE DEFINITIONS
-// ═══════════════════════════════════════════════════════
+
 const DINO_tYPES = [
-    { name: 'Jade',    body:'#4ade80', dark:'#16a34a', belly:'#bbf7d0' },
-  { name: 'Inferno', body:'#f87171', dark:'#b91c1c', belly:'#fecaca' },
-  { name: 'Ocean',   body:'#38bdf8', dark:'#0369a1', belly:'#bae6fd' },
-  { name: 'Solar',   body:'#fbbf24', dark:'#b45309', belly:'#fef08a' },
-  { name: 'Violet',  body:'#a78bfa', dark:'#6d28d9', belly:'#ede9fe' },
-  { name: 'Coral',   body:'#fb923c', dark:'#c2410c', belly:'#fed7aa' },
-  { name: 'Rose',    body:'#f472b6', dark:'#be185d', belly:'#fce7f3' },
-  { name: 'Slate',   body:'#94a3b8', dark:'#475569', belly:'#e2e8f0' },
+    { name: 'Jade',    body:'#4ade80', dark:'#16a34a', belly:'#bbf7d0' price:0  },
+  { name: 'Inferno', body:'#f87171', dark:'#b91c1c', belly:'#fecaca' price:0  },
+  { name: 'Ocean',   body:'#38bdf8', dark:'#0369a1', belly:'#bae6fd' price:0  },
+  { name: 'Solar',   body:'#fbbf24', dark:'#b45309', belly:'#fef08a' price:0  },
+  { name: 'Violet',  body:'#a78bfa', dark:'#6d28d9', belly:'#ede9fe' price:20  },
+  { name: 'Coral',   body:'#fb923c', dark:'#c2410c', belly:'#fed7aa' price:50  },
+  { name: 'Rose',    body:'#f472b6', dark:'#be185d', belly:'#fce7f3' price:100   },
+  { name: 'Phantom',   body:'#94a3b8', dark:'#475569', belly:'#e2e8f0' price:250  },
 ];
 
 let selectedDinoIdx = 0;
 
-// ═══════════════════════════════════════════════════════
-//  HELPER: rounded rect path
-// ═══════════════════════════════════════════════════════
 function rr(ctx, x, y, w, h, r) {
+
+   if (w < 2 * r) r = w / 2;
+   if (h < 2 * r) r = h / 2;
+
     ctx.beginPath();
     ctx.moveTo(x+r,y);
     ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
@@ -227,6 +243,84 @@ function rr(ctx, x, y, w, h, r) {
     ctx.closePath();
 }
 
+function drawDino(ctx, x, bottomY, w, h, palette, opts = {}) {
+  const { ducking = false, dead = false, legPhase = 0, special = null } = opts;
+  const top = bottomY - h;
+  const C = palette;
+
+  ctx.save();
+  if (ducking) {
+   ctx.fillStyle = C.dark;
+   ctx.beginPath();
+   ctx.moveTo(x, top + h*0.3);
+   ctx.lineTo(x-14, top+h*0.5);
+   ctx.lineTo(x, top+h*0.7);
+   ctx.closePath(); cts.fill();
+   ctx.shadowColor = C.body; ctx.shadowBlur = 8;
+   ctx.fillSyle = C.body;
+   rr(ctx, x, top, w, h, 6); ctx.fill();
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = C.belly;
+   rr(ctx, x+4, top+h*0.35, w-10, h*0.55, 4); ctx.fill();
+   ctx.fillStyle = C.body;
+   ctx.shadowColor = C.body; ctx.shadowBlur = 5;
+   rr(ctx, x+w-4, top-4, 26, 20, 5); ctx.fill();
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = C.dark;
+   rr(ctx, x+w+4, top+8, 18, 8, 3); ctx.fill();
+   if (dead) {
+      ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x+w+8,top); ctx.lineTo(x+w+16,top+8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+w+16,top); ctx.lineTo(x+w+8,top+8); ctx.stroke();
+   } else {
+      ctx.fillStyle = '#0f0f1a';
+      ctx.beginPath(); ctx.arc(x+w+12,top+4,4,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(x+w+13,top+3,1.5,0,Math.PI*2); ctx.fill();
+   }
+   ctx.fillStyle = C.dark;
+   ctx.fillRect(x+6, top+h-2, 10, 10);
+   ctx.fillRect(x+22, top+h-2, 10, 10);
+   ctx.fillStyle = C.body;
+   ctx.fillRect(x+6, top+h+6, 12, 4);
+   ctx.fillRect(x+22, top+h+6, 12, 4);
+  } else {
+   ctx.fillStyle = C.dark;
+   ctx.beginPath();
+   ctx.moveTo(x+4, top+h*0.5);
+   ctx.lineTo(x-16, top+h*0.7);
+   ctx.lineTo(x+4, top+h*0.85);
+   ctx.closePath(); ctx.fill();
+   ctx.shadowColor = C.body; ctx.shadowBlur = 10;
+   ctx.fillStyle = C.body;
+   rr(ctx, x+2, top+h*0.2, w-4, h*0.8, 8); ctx.fill();
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = C.belly;
+   rr(ctx, x+7, top+h*0.42, w-16, h*0.45, 5); ctx.fill();
+   ctx.fillStyle = C.dark;
+   rr(ctx, x+w-12, top+h*0.32, 10, 7, 3); ctx.fill();
+   ctx.fillStyle = C.body;
+   ctx.fillRect(x+w-6, top+h*0.32+7, 3, 5);
+   ctx.fillRect(x+w-10, top+h*0.32+7, 3, 4);
+   ctx.fillStyle = C.body;
+   rr(ctx, x+w-10, top+h*0.05, 14, h*0.25, 5); ctx.fill();
+   ctx.shadowColor = C.body; ctx.shadowBlur = 8;
+   ctx.fillStyle = C.body;
+   rr(ctx, x+w-8, top-14, 28, 20, 6); ctx.fill();
+   rr(ctx, x+w+2, top+4, 22, 10, 4); ctx.fill();
+   ctx.shadowBlur = 0;
+   ctx.fillStyle = C.dark;
+   rr(ctx, x+w+4, top+10, 18, 7, 3); ctx.fill();
+   ctx.fillStyle = '#fff';
+   for (let t = 0; t < 3; t++) {
+      ctx.beginPath();
+      ctx.moveTo(x+w+6+t*5, top+10);
+      ctx.lineTo(x+w+8+t*5, top+14);
+      ctx.lineTo(x+w+10+t*5, top+10);
+      ctx.closePath(); ctx.fill();
+   } 
+   
+  }
 
 
 
