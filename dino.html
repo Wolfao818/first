@@ -398,7 +398,15 @@ function drawDino(ctx, x, bottomY, w, h, palette, opts = {}) {
       ctx.beginPath(); ctx.moveTo(x+2,wy+9); ctx.lineTo(x-14,wy+3+wingFlap); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x+2,wy+14); ctx.lineTo(x-12,wy+13+wingFlap); ctx.stroke();
       ctx.shadowBlur=0;
-    } 
+    }  else if (special==='ghost') {
+      const glow = 0.5+Math.sin(Date.now()*0.006)*0.3;
+      ctx.save();
+      ctx.globalAlpha=glow*0.35;
+      ctx.shadowColor='#a5b4fc'; ctx.shadowBlur=20;
+      ctx.fillStyle='#a5b4fc';
+      rr(ctx, x-4, top-4, w+8, h+8, 12); ctx.fill();
+      ctx.restore();
+    }
   } 
   
 
