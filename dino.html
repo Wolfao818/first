@@ -406,10 +406,37 @@ function drawDino(ctx, x, bottomY, w, h, palette, opts = {}) {
       ctx.fillStyle='#a5b4fc';
       rr(ctx, x-4, top-4, w+8, h+8, 12); ctx.fill();
       ctx.restore();
+      ctx.save();
+      ctx.globalAlpha=0.25;
+      ctx.fillStyle=C.body;
+      rr(ctx, x-22, top+10, w*0.7, h*0.7, 8); ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha=0.5;
+      ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(x-14, top+18, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x-4,  top+18, 4, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle='#6d28d9';
+      ctx.beginPath(); ctx.arc(x-13, top+18, 2, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x-3,  top+18, 2, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
     }
   } 
   
+  ctx.restore();
+}
 
+// localstrorage
+let coins      = parseInt(localStorage.getItem('dr_coins') || '0');
+let unlockedDinos = JSON.parse(localStorage.getItem('dr_unlocked') || '[0,1,2,3]');
+selectedDinoIdx   = parseInt(localStorage.getItem('dr_selected') || '0');
+if (!unlockedDinos.includes(selectedDinoIdx)) selectedDinoIdx = 0;
+
+function saveData() {
+  localStorage.setItem('dr_coins',    coins);
+  localStorage.setItem('dr_unlocked', JSON.stringify(unlockedDinos));
+  localStorage.setItem('dr_selected', selectedDinoIdx);
+}
 
 
     <html>
