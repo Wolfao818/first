@@ -319,4 +319,89 @@ function drawDino(ctx, x, bottomY, w, h, palette, opts = {}) {
       ctx.lineTo(x+w+10+t*5, top+10);
       ctx.closePath(); ctx.fill();
     }
+    if (dead) {
+      ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(x+w+4,top-10); ctx.lineTo(x+w+12,top-2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+w+12,top-10); ctx.lineTo(x+w+4,top-2); ctx.stroke();      
+    } else {
+      ctx.fillStyle = '#0f0f1a';
+      ctx.beginPath(); ctx.arc(x+w+8,top-6,5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(x+w+9,top-7,2,0,Math.PI*2); ctx.fill();      
+    }
+    ctx.fillStyle = C.dark;
+    const sx = x+w-6;
+    for (let s=0; s<3; s++) {
+      ctx.beginPath();
+      ctx.moveTo(sx-s*7,     top+h*0.18-s*2);
+      ctx.lineTo(sc-s*7-4,  top+h*0.05-s*3)
+      ctx.lineTo(sc-s*7-8,  top+h*0.18-s*2);
+      ctx.closePath(); ctx.fill();
+    }
+    const l1 = legPhase === 0;
+    ctx.fillStyle = C.dark;
+    ctx.fillRect(x+10, top+h-2, 11, l1?16:10);
+    ctx.fillStyle = C.body;
+    ctx.fillRect(x+8,  top+h+(l1?12:6), 15, 5);
+    ctx.fillStyle = C.dark;
+    ctx.fillRect(x+24, top+h-2, 11, l1?10:16);
+    ctx.fillStyle = C.body;
+    ctx.fillRect(x+22, top+h+(l1?6:12), 15, 5);
+  }
+
+  if (special && !dead) {
+    const headX = x+w-8, headY = top-14;
+    if (special==='crown') {
+      ctx.shadowColor='#fbbf24'; ctx.shadowBlur=10;
+      ctx.shadowColor='fbbf24';
+      ctx.fillRect(headX+2, headY-9, 22, 8);
+      ctx.fillRect(headX+2, headY-14, 5, 6);
+      ctx.fillRect(headX+10, headY-13, 5, 6);
+      ctx.fillRect(headX+18, headY-14, 5, 6);
+      ctx.fillStyle='#ef4444';
+      ctx.beginPath(); ctx.arc(headX+5,  headY-7, 2.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle='#60a5fa';
+      ctx.beginPath(); ctx.arc(headX+13,  headY-7, 2.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle='#4ade80';
+      ctx.beginPath(); ctx.arc(headX+21,  headY-7, 2.5, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    } else if (special==='armor') {
+      ctx.shadowColor='#94a3b8'; ctx.shadowBlur=6;
+      ctx.fillStyle='cbd5e1';
+      rr(ctx, x+4, top+h*0.2, w-8, h*0.28, 4); ctx.fill();
+      ctx.fillStyle='#94a3b8';
+      ctx.lineWidth=1.5; ctx.strokeStyle='#64748b';
+      ctx.beginPath(); ctx.moveTo(x+w/2-4, top+h*0.2); ctx.lineTo(x+w/2-4, top+h*0.48); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+w/2+4, top+h*0.2); ctx.lineTo(x+w/2+4, ctx.lineTo, top+h*0.48); ctx.stroke();
+      ctx.fillStyle='#e2e8f0';
+      rr(ctx, x+w-16, top+h*0.15, 12, 10, 3); ctx.fill();
+      ctx.shadowBlur=0;
+    } else if (special==='wings') {
+      // skrzydla po bokach
+      const wy = top+h*0.35;
+      const wingFlap = Math.sin(Date.now()*0.008)*6;
+      ctx.shadowColor=C.body; ctx.shadowBlur=10;
+      ctx.fillStyle=C.belly;
+      // po lewo
+      ctx.beginPath();
+      ctx.moveTo(x+2, wy);
+      ctx.bezierCurveTo(x-18, wy-10+wingFlap, x-22, wy+8+wingFlap, x+2, wy+18);
+      ctx.closePath(); ctx.fill();
+      // obrys
+      ctx.strokeStyle=C.dark; ctx.lineWidth=1.5;
+      ctx.beginPath();
+      ctx.moveTo(x+2, wy);
+      ctx.bezierCurveTo(x-18, wy-10+wingFlap, x-22, wy+8+wingFlap, x_2, wy+18);
+      ctx.stroke();
+      //
+      ctx.strokeStyle=C.body+'99'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x+2,wy+9); ctx.lineTo(x-14,wy+3+wingFlap); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+2,wy+14); ctx.lineTo(x-12,wy+13+wingFlap); ctx.stroke();
+      ctx.shadowBlur=0;
+    } 
+  } 
+  
+
+
+
     <html>
