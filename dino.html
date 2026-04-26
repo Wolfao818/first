@@ -480,4 +480,52 @@ function selectDino(i) {
   buildCharSelect();
   drawMenuDino();
 }
+
+// sklep
+function buildShop() {
+  document.getElementById('shopCoins').textContent = coins;
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+  DINO_TYPES.forEach((d, i) => {
+    const owned  = unlockedDinos.includes(i);
+    const canBuy = !owned && coins >= d.price;
+    const card   = document.createElement('div');
+    card.className = 'shop-card' + (owned?' owned': canBuy?' can-buy':' cant-afford');
+
+    const cv = document.createElement('canvas');
+    cv.width = 80; cv.height = 70;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#0f0f2a'; cx.fillRect(0,0,80,70);
+    drawDino(cx, 14, 62, 38, 48, d, { legPhase:0 });
+    if (!owned) { cx.fillStyle='#00000077'; cx.fillRect(0,0,80,70); }
+
+    const name = document.createElement('div');
+    name.className = 'shop-dino-name';
+    name.textContent = d.name.toUpperCase();
+
+    const priceEl = document.createElement('div');
+    if (owned || d.price===0) {
+      priceEl.className = 'shop-owned-tag';
+      priceEl.textContent = owned ? '✓ KUPIONY' : '✓ DARMOWY';
+    } else {
+        priceEl.className = 'shop-price';
+        priceEl.textContent = '🪙 ${d.price}';
+      }
+
+      card.appendChild(cv); card.appendChild(name); card.appendChild(priceEl);
+      if (canBuy && d.price > 0) {
+        card.addEventListener('clicl', () => {
+          if (coins >= d.price) {
+            coins -= d.price;
+            unlockedDinos.push(i);
+            saveData(); updateCoinUI();
+            buildShop(); buildCharSelect();
+          }
+        });
+      }
+      grid.appendChild(card);
+    });
+  }
+
+
     <html>
