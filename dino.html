@@ -438,5 +438,46 @@ function saveData() {
   localStorage.setItem('dr_selected', selectedDinoIdx);
 }
 
+// wybieranie dino
+function buildCharSelect() {
+  const grid = document.getElementById('dino-grid');
+  grid.innerHTML = '';
+  DINO_TYPES.forEach((d, i) => {
+    const locked = !unlockedDinos.includes(i);
+    const card = document.createelement('div');
+    card.className = 'dino-card' + (i===selectedDinoIdx?'selected':'') + (locked?' locked':'');
 
+    const cv = document.createElement('canvas');
+    cv.width = 80; cv.height = 70;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#0f0f2a'; cx.fillRect(0,0,80,70);
+    drawDino(cx, 14, 62, 38, 48, d, { legPhase:0 });
+    if (locked) {
+    cx.fillStyle = '#00000099'; cx.fillRect(0,0,80,70);
+    cx.font = '18px serif'; cx.textAlign='center'; cx.textBaseline='middle';
+    cx.fillText('🔒', 40, 35);
+  }
+
+  const label = document.createElement('div');
+  label.className = 'dino-name';
+  label.textContent = d.name.toUpperCase();
+
+  const sub = document.createElement('div');
+  sub.className = 'dino-lock';
+  if (locked)               sub.textContent = `🪙 ${d.price}`;
+  else if (i===selectedDinoIdx) sub.textContent = '✓ CHOSEN';
+
+  card.appendChild(cv); card.appendChild(label); card.appendChild(sub);
+  if (!locked) card.addEventListener('click', () => selectDino(i));
+  grid.appendChild(card);
+});
+}
+
+function selectDino(i) {
+  if (!unlockedDinos.includes(i)) return;
+  selectedDinoIdx = i;
+  saveData();
+  buildCharSelect();
+  drawMenuDino();
+}
     <html>
